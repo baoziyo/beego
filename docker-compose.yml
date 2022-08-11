@@ -1,0 +1,20 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  whell_hyperf_php:
+    container_name: whell_hyperf_php
+    restart: always
+    build:
+      context: ./docker/php
+    volumes:
+      - ./:/var/www
+    ports:
+      - "9501:9501"
+    environment:
+      - FAKETIME=-0
+    networks:
+      - backend
