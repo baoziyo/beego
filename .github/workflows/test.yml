@@ -27,7 +27,7 @@ jobs:
         run: |
           swoole_version=$(response=$(curl -s -i https://github.com/swoole/swoole-src/releases/latest | grep 'location' | head -n 1) && echo ${response##*/v})
           echo "::set-output name=swoole_version::$swoole_version"
-      - name: Setup php
+      - name: Setup Swoole
         run: |
           sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
@@ -40,8 +40,8 @@ jobs:
           ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql
           make -j$(nproc)
           sudo make install
-          sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
-          sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
+          sudo sh -c "echo extension=swoole > /etc/php/8.1/cli/conf.d/swoole.ini"
+          sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/8.1/cli/conf.d/swoole.ini"
           php --ri swoole
       - name: Setup Services
         run: |
