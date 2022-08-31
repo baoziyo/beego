@@ -17,7 +17,6 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT as FirebaseJwt;
 use Firebase\JWT\Key as FirebaseKey;
 use Firebase\JWT\SignatureInvalidException;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
 class Jwt implements TokenStrategy
 {
@@ -25,7 +24,7 @@ class Jwt implements TokenStrategy
 
     public const LEEWAY = 30;
 
-    public function generateToken(array $params = []): array
+    public function generateToken(int $userId): array
     {
         $this->checkConfig();
         $time = time();
@@ -36,7 +35,7 @@ class Jwt implements TokenStrategy
             'iat' => $time,
             // 过期时间
             'exp' => $time + self::EXPIRES_TIME,
-            'data' => array_merge($params, ['type' => 'onlyValidate']),
+            'data' => ['type' => 'onlyValidate', 'userId' => $userId],
         ];
         $jwt = FirebaseJwt::encode($payload, env('JWT_KEY'), self::ALG);
         $payload['data']['type'] = 'onlyRefresh';
@@ -52,20 +51,21 @@ class Jwt implements TokenStrategy
     public function refreshToken(string $refreshToken): array
     {
         $this->checkConfig();
-        $info = $this->encode($refreshToken);
+        $data = $this->encode($refreshToken);
 
-        return $this->generateToken($info);
+        return $this->generateToken($data['userId']);
     }
 
-    public function validate(RequestInterface $request): array
+    public function validate(string $token): int
     {
         $this->checkConfig();
-        $token = $request->getHeaderLine('Token');
         if (empty($token)) {
             throw new TokenException(TokenException::TOKEN_EMPTY);
         }
 
-        return $this->encode($token);
+        $encode = $this->encode($token);
+
+        return $encode['data']['userId'];
     }
 
     private function checkConfig(): void

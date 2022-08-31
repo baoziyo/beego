@@ -26,11 +26,6 @@ abstract class BaseServiceImpl implements BaseService
         $this->container = $container;
     }
 
-    protected function buildConditions(array $conditions): array
-    {
-        return $conditions;
-    }
-
     protected function getLogService(): LogService
     {
         return $this->biz->getService('Log:Log');

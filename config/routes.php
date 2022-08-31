@@ -20,6 +20,10 @@ if (env('APP_ENV') === 'dev') {
     });
 }
 
+if (env('APP_ENV') === 'test') {
+    require_once BASE_PATH . '/test/Config/routes.php';
+}
+
 Router::addGroup('', static function () {
     require_once 'routes/login.php';
     require_once 'routes/captcha.php';

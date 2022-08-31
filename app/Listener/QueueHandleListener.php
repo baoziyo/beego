@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 class QueueHandleListener implements ListenerInterface
 {
     protected LoggerInterface $logger;
+
     protected FormatterInterface $formatter;
 
     public function __construct(LoggerFactory $loggerFactory, FormatterInterface $formatter)

@@ -16,15 +16,15 @@ use Hyperf\Snowflake\Concern\Snowflake;
 
 /**
  * @property int $id
- * @property string $queue
- * @property string $type
- * @property string $template
- * @property array $params
- * @property array $sendUserIds
- * @property string $status
- * @property int $delay
- * @property Carbon $createdTime
- * @property Carbon $updatedTime
+ * @property string $queue 队列名称
+ * @property string $type 发送通道
+ * @property string $template 模版
+ * @property array $params 模版参数
+ * @property array $sendUserIds 接收用户Ids
+ * @property string $status 发送状态: doing 等待发送; finished 发送成功; failed 发送失败;
+ * @property int $delay 延迟发送(sec)
+ * @property Carbon $createdTime 创建时间
+ * @property Carbon $updatedTime 更新时间
  */
 class QueueDaoImpl extends BaseDaoImpl
 {

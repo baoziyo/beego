@@ -27,6 +27,7 @@ class UserServiceImpl extends BaseServiceImpl implements UserService
     }
 
     /**
+     * @param array $ids
      * @return Collection<int,UserDaoImpl>
      */
     public function find(array $ids): Collection
@@ -94,6 +95,13 @@ class UserServiceImpl extends BaseServiceImpl implements UserService
         return $user;
     }
 
+    public function getCurrentUser(): UserDaoImpl
+    {
+        $currentUserId = $this->biz->getContext()::get('currentUserId');
+
+        return $this->getUser($currentUserId);
+    }
+
     private function getUserSourceStrategy(string $type): UserSourceStrategy
     {
         if (!isset(self::USER_SOURCE_STRATEGY_TYPE[$type])) {
@@ -104,7 +112,7 @@ class UserServiceImpl extends BaseServiceImpl implements UserService
     }
 
     /**
-     * @return array[eg:password,eg:salt]
+     * @return array[password,salt]
      */
     private function generatePassword(string $password): array
     {

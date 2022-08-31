@@ -22,6 +22,7 @@ use Hyperf\Guzzle\PoolHandler;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use League\Flysystem\Filesystem;
@@ -35,36 +36,44 @@ class BizImpl implements Biz
 {
     protected string $serviceDir = 'App\\Biz\\%s%s\\Service\\Impl\\%sServiceImpl';
 
-    protected string $daoDir = 'App\\Biz\\%s%s\\Dao\\%sDaoImpl';
-
     private ConfigInterface $config;
 
     private ContainerInterface $container;
 
-    public function __construct(ConfigInterface $config, ContainerInterface $container)
+    private Context $context;
+
+    public function __construct(ConfigInterface $config, ContainerInterface $container, Context $context)
     {
         $this->config = $config;
         $this->container = $container;
+        $this->context = $context;
     }
 
     public function getVersion(string $appointVersion = ''): string
     {
         if ($appointVersion === '') {
             $request = make(RequestInterface::class);
-            if (!Context::get(ServerRequestInterface::class) || !$request->hasHeader('version')) {
+            if (!$this->context::get(ServerRequestInterface::class) || !$request->hasHeader('version')) {
                 return strtolower((string)env('SYSTEM_API_VERSION', ''));
             }
+
             return strtolower((string)$request->header('version'));
         }
+
         return strtolower($appointVersion);
     }
 
-    public function getService(string $serviceName, string $version = '')
+    public function getService(string $serviceName, string $version = ''): mixed
     {
         $version = $this->getVersion($version);
         [$serviceDir, $file] = explode(':', $serviceName);
         $version = $version !== '' ? '\\' . $version : '';
         $class = sprintf($this->serviceDir, $serviceDir, $version, $file);
+
+        if (!class_exists($class)) {
+            $class = sprintf($this->serviceDir, $serviceDir, '', $file);
+        }
+
         return make($class);
     }
 
@@ -72,7 +81,7 @@ class BizImpl implements Biz
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getRedis(string $poolName = 'default'): CacheInterface
+    public function getRedis(string $poolName = 'default'): RedisProxy
     {
         return $this->getContainer()->get(RedisFactory::class)->get($poolName);
     }
@@ -99,10 +108,11 @@ class BizImpl implements Biz
 
     public function getCurrentUser(): array
     {
-        if (Context::get('user') === null) {
+        if ($this->context::get('user') === null) {
             return [];
         }
-        return Json::decode(Context::get('user'));
+
+        return Json::decode($this->context::get('user'));
     }
 
     public function getAmqp(): Producer
@@ -123,5 +133,10 @@ class BizImpl implements Biz
     public function getFileSystem(string $adapterName = 'local'): Filesystem
     {
         return make(FilesystemFactory::class)->get($adapterName);
+    }
+
+    public function getContext(): Context
+    {
+        return $this->context;
     }
 }

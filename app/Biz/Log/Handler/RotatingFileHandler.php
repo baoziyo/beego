@@ -9,9 +9,6 @@ declare(strict_types=1);
 
 namespace App\Biz\Log\Handler;
 
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Inject;
 use Monolog\Level;
 use Monolog\LogRecord;
 use Monolog\Utils;
@@ -19,9 +16,6 @@ use Monolog\Utils;
 class RotatingFileHandler extends \Monolog\Handler\RotatingFileHandler
 {
     protected string $filenameConfig;
-
-    #[Inject]
-    protected ConfigInterface $config;
 
     public function __construct(string $filename, int $maxFiles = 0, int|string|Level $level = Level::Debug, bool $bubble = true, ?int $filePermission = null, bool $useLocking = false)
     {
@@ -52,9 +46,6 @@ class RotatingFileHandler extends \Monolog\Handler\RotatingFileHandler
      */
     protected function write(LogRecord $record): void
     {
-        if (!$this->filterSystemLevel($record)) {
-            return;
-        }
         $this->stream = null;
         if ($record->channel === env('APP_NAME')) {
             $this->filename = str_replace('%filename%', strtolower($record->level->toPsrLogLevel()), Utils::canonicalizePath($this->filenameConfig));
@@ -129,17 +120,5 @@ class RotatingFileHandler extends \Monolog\Handler\RotatingFileHandler
             }
         }
         $this->mustRotate = false;
-    }
-
-    private function filterSystemLevel(LogRecord $record): bool
-    {
-        if (isset($record['channel']) && $record['channel'] === 'system') {
-            $levelConfig = $this->config->get(StdoutLoggerInterface::class, ['log_level' => []]);
-            /* @phpstan-ignore-next-line */
-            if (!in_array(strtolower($record['level_name']), $levelConfig['log_level'], true)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

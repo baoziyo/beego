@@ -13,23 +13,20 @@ use App\Biz\Queue\Service\QueueService;
 use App\Core\Biz\Container\Biz;
 use App\Utils\ErrorTools;
 use Hyperf\AsyncQueue\Job;
-use Hyperf\Di\Annotation\Inject;
 use Throwable;
 
 abstract class BaseQueue extends Job
 {
-    /**
-     * @Inject
-     */
     protected Biz $biz;
 
     protected int $maxAttempts = 3;
 
     protected array $params;
 
-    public function __construct(array $params)
+    public function __construct(Biz $biz, array $params)
     {
         $this->params = $params;
+        $this->biz = $biz;
     }
 
     /**

@@ -22,7 +22,6 @@ class TokenServiceImpl extends BaseServiceImpl implements TokenService
     }
 
     /**
-     * @param array $ids
      * @return Collection<int,TokenDaoImpl>
      */
     public function find(array $ids): Collection
@@ -64,7 +63,7 @@ class TokenServiceImpl extends BaseServiceImpl implements TokenService
 
         $expiresTime = $token->expiresTime->getTimestamp();
         $createdTime = $token->createdTime->getTimestamp();
-        if ($expiresTime >= time() || $createdTime + $token->expires > time()) {
+        if ($expiresTime < time() || $createdTime + $token->expires < time()) {
             return '';
         }
 

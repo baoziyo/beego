@@ -17,12 +17,12 @@ use Hyperf\Snowflake\Concern\Snowflake;
 
 /**
  * @property int $id
- * @property string $name
- * @property string $status
- * @property array $data
- * @property Carbon $createdTime
- * @property Carbon $updatedTime
- * @property Carbon $deletedTime
+ * @property string $name 权限名称
+ * @property string $status 状态:enabled 启用;disabled 禁用;
+ * @property array $data 权限配置
+ * @property Carbon $createdTime 创建时间
+ * @property Carbon $updatedTime 更新时间
+ * @property Carbon $deletedTime 删除时间
  */
 class RoleDaoImpl extends BaseDaoImpl
 {

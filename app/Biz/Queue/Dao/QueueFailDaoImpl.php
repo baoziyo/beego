@@ -15,11 +15,12 @@ use Hyperf\ModelCache\Cacheable;
 
 /**
  * @property int $id
- * @property array $failUserIds
- * @property int $sendCount
- * @property array $failDetails
- * @property Carbon $createdTime
- * @property Carbon $updatedTime
+ * @property int $targetId 通知id
+ * @property array $failUserIds 发送失败用户Ids
+ * @property int $sendCount 发送次数
+ * @property array $failDetails 失败详情
+ * @property Carbon $createdTime 创建时间
+ * @property Carbon $updatedTime 更新时间
  */
 class QueueFailDaoImpl extends BaseDaoImpl
 {
@@ -28,11 +29,12 @@ class QueueFailDaoImpl extends BaseDaoImpl
     protected ?string $table = 'queue_fail';
 
     protected array $fillable = [
-        'id', 'failUserIds', 'sendCount', 'failDetails', 'createdTime', 'updatedTime',
+        'id', 'targetId', 'failUserIds', 'sendCount', 'failDetails',
     ];
 
     protected array $casts = [
         'id' => 'integer',
+        'targetId' => 'integer',
         'failUserIds' => 'array',
         'sendCount' => 'integer',
         'failDetails' => 'array',

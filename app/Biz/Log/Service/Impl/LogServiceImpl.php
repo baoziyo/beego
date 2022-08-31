@@ -5,7 +5,7 @@
  * ogg sit down and start building bugs.
  * Author: Ogg <baoziyoo@gmail.com>.
  */
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace App\Biz\Log\Service\Impl;
 
@@ -91,7 +91,20 @@ class LogServiceImpl extends BaseServiceImpl implements LogService
     public function createGraylog(string $level, string $message, array $context = []): void
     {
         if (env('GRAYLOG', false)) {
-            $this->biz->getClient([], false)->post(env('GRAYLOG_DOMAIN', 'http://127.0.0.1') . ':' . env('GRAYLOG_PORT', 12201) . '/gelf', ['json' => ['level' => self::GRAY_LOG_LEVELS[$level], 'version' => env('SYSTEM_API_VERSION', 'v1'), 'source' => env('GRAYLOG_SOURCE') ?? gethostname(), 'log_source' => env('APP_NAME') . '_' . env('APP_ENV'), 'full_message' => Json::encode($context), 'message' => $message . (!empty($context['target']) ? '->#' . $context['target'] : '')]]);
+            $this->biz->getClient([], false)
+                ->post(
+                    env('GRAYLOG_DOMAIN', 'http://127.0.0.1') . ':' . env('GRAYLOG_PORT', 12201) . '/gelf',
+                    [
+                        'json' => [
+                            'level' => self::GRAY_LOG_LEVELS[$level],
+                            'version' => env('SYSTEM_API_VERSION', 'v1'),
+                            'source' => env('GRAYLOG_SOURCE') ?? gethostname(),
+                            'log_source' => env('APP_NAME') . '_' . env('APP_ENV'),
+                            'full_message' => Json::encode($context),
+                            'message' => $message . (!empty($context['target']) ? '->#' . $context['target'] : ''),
+                        ],
+                    ]
+                );
         }
     }
 }

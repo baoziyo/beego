@@ -6,16 +6,10 @@
  */
 
 declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+
 namespace HyperfTest;
 
+use App\Core\Biz\Container\Biz;
 use Hyperf\Testing\Client;
 use PHPUnit\Framework\TestCase;
 
@@ -29,15 +23,14 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class HttpTestCase extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
+    protected Biz $biz;
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         $this->client = make(Client::class);
+        $this->biz = make(Biz::class);
     }
 
     public function __call($name, $arguments)

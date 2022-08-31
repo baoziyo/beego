@@ -8,14 +8,12 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use App\Annotation\ResponseFilter\ResponseFilterAnnotations;
+use App\Annotation\ResponseFilter\ResponseFilter;
 use App\Core\Biz\Container\Biz;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,16 +28,14 @@ class ResponseMiddleware implements MiddlewareInterface
 
     protected HttpResponse $response;
 
-    /**
-     * @Inject
-     */
     protected Biz $biz;
 
-    public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
+    public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request, Biz $biz)
     {
         $this->container = $container;
         $this->response = $response;
         $this->request = $request;
+        $this->biz = $biz;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -54,35 +50,32 @@ class ResponseMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    private function annotationReader(ServerRequestInterface $request, $response)
+    private function annotationReader(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $content = $response->getBody()->getContents();
-        [$className, $actionName] = $this->getClassAndAction($request);
-        if (! $className || ! $actionName) {
+        [$className, $methodName] = $this->getClassAndMethod($request);
+        if (!$className || !$methodName) {
             return $response;
         }
         $class = new \ReflectionClass($className);
-        $action = $class->getMethod($actionName);
-        $reader = new AnnotationReader();
+        $action = $class->getMethod($methodName);
+        $annotationMethodResponseFilter = (new AnnotationReader())->getMethodAnnotation($action, ResponseFilter::class);
 
-        foreach ($reader->getMethodAnnotations($action) as $annotation) {
-            switch (get_class($annotation)) {
-                case ResponseFilterAnnotations::class:
-                    return $this->responseFilter($annotation, $content, $className);
-                default:
-                    return $response;
-            }
+        if ($annotationMethodResponseFilter === null) {
+            return $response;
         }
 
-        return $response;
+        return match (get_class($annotationMethodResponseFilter)) {
+            ResponseFilter::class => $this->responseFilter($annotationMethodResponseFilter, $content, $className),
+            default => $response,
+        };
     }
 
-    private function responseFilter($annotation, $content, $className): ResponseInterface
+    private function responseFilter(mixed $annotation, string $content, string $className): ResponseInterface
     {
-        $class = $annotation->getClass() ?: $this->getFilterClassName($className);
-
-        $fieldFilter = new $class();
-        $mode = $annotation->getMode();
+        $class = $annotation->class;
+        $mode = $annotation->mode;
+        $fieldFilter = new $class($this->biz);
 
         if ($mode) {
             $fieldFilter->setMode($mode);
@@ -90,28 +83,22 @@ class ResponseMiddleware implements MiddlewareInterface
 
         $content = $fieldFilter->filter($content);
 
-        $response = Context::get(ResponseInterface::class);
+        $response = $this->biz->getContext()::get(ResponseInterface::class);
         $response->getBody()->write($content);
-        Context::set(ResponseInterface::class, $response);
+        $this->biz->getContext()::set(ResponseInterface::class, $response);
 
         return $response->withAddedHeader('Content-Type', 'application/json');
     }
 
-    private function getClassAndAction(ServerRequestInterface $request): array
+    private function getClassAndMethod(ServerRequestInterface $request): array
     {
         $name = $request->getAttribute(Dispatched::class)->handler->callback;
-        if (! is_string($name)) {
+        if (!is_string($name)) {
             return [null, null];
         }
 
-        [$class, $action] = explode('@', $name);
+        [$class, $method] = explode('@', $name);
 
-        return [$class, $action];
-    }
-
-    private function getFilterClassName($className): string
-    {
-        $class = substr(substr(strrchr($className, '\\'), 1), 0, -10);
-        return preg_replace('/[A-Z|a-z]+Controller$/', 'Filter\\' . $class . 'Filter', $className);
+        return [$class, $method];
     }
 }

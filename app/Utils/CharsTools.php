@@ -13,9 +13,8 @@ class CharsTools extends App
 {
     /**
      * 随机生成字符串.
-     * @param mixed $len
      */
-    public static function getRandChar($len): string
+    public static function getRandChar(int $len): string
     {
         $a = range('a', 'z');
         $b = range('A', 'Z');
@@ -41,7 +40,7 @@ class CharsTools extends App
         return strtolower($uuid);
     }
 
-    public static function generateMd5By16Bit($string): string
+    public static function generateMd5By16Bit(string $string): string
     {
         return substr(md5($string), 8, 16);
     }

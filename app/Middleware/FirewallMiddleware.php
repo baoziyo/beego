@@ -13,10 +13,8 @@ use App\Biz\User\Service\TokenService;
 use App\Biz\User\Service\UserService;
 use App\Core\Biz\Container\Biz;
 use App\Core\Biz\Service\BaseService;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
-use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,12 +29,12 @@ class FirewallMiddleware implements MiddlewareInterface
 
     protected HttpResponse $response;
 
-    /**
-     * @Inject
-     */
     protected Biz $biz;
 
-    // eg: '/^\/product$\??(.*)/'
+    /**
+     * eg: '/^\/product$\??(.*)/'.
+     * @var array|array[]
+     */
     protected array $whitelist = [
         'POST' => [],
         'GET' => [],
@@ -44,11 +42,12 @@ class FirewallMiddleware implements MiddlewareInterface
         'DELETE' => [],
     ];
 
-    public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
+    public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request, Biz $biz)
     {
         $this->container = $container;
         $this->response = $response;
         $this->request = $request;
+        $this->biz = $biz;
         if (env('APP_ENV') === 'dev') {
             $this->whitelist['POST'] = array_merge($this->whitelist['POST'], ['/^\/test\??(.*)/']);
             $this->whitelist['GET'] = array_merge($this->whitelist['GET'], ['/^\/test\??(.*)/']);
@@ -59,32 +58,36 @@ class FirewallMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (! preg_match('/^\/admin(.*)/', parse_url($request->url())['path']) && $this->checkWhitelists($request->url())) {
+        $path = $this->request->getPathInfo();
+
+        $type = $this->request->getHeaderLine('Token-Type');
+        $token = $this->request->getHeaderLine('Token');
+
+        if ($type !== '' && $token !== '') {
+            $userId = $this->getTokenService()->validate($type, $token);
+            $this->biz->getContext()::set('currentUserId', $userId);
+        }
+
+        if (env('APP_ENV') === 'test' || (!preg_match('/^\/admin(.*)/', $path) && $this->checkWhitelists($path))) {
             return $handler->handle($request);
         }
 
-        $type = $this->request->getHeaderLine('Token-Type');
-        $info = $this->getTokenService()->validate($type, $this->request);
-        Context::set('user', Json::encode($info));
-
-        $uri = parse_url($request->url())['path'];
-        if (! empty($uri) && preg_match('/^\/admin(.*)/', $uri)) {
-            $user = $this->getUserService()->getByCache($info['id']);
-            if ($user['isAdmin'] !== BaseService::ENABLED) {
-                $this->getRoleService()->isPermission($user['role'], $uri);
+        if (preg_match('/^\/admin(.*)/', $path)) {
+            $currentUser = $this->getUserService()->getCurrentUser();
+            if ($currentUser->isAdmin !== BaseService::ENABLED) {
+                $this->getRoleService()->isPermission($currentUser->role, $path);
             }
         }
 
         return $handler->handle($request);
     }
 
-    protected function checkWhitelists($url): bool
+    protected function checkWhitelists(string $path): bool
     {
         foreach ($this->whitelist as $method => $whitelist) {
             foreach ($whitelist as $uri) {
                 if ($this->request->getMethod() === $method
-                    && ! empty(parse_url($url)['path'])
-                    && preg_match($uri, parse_url($url)['path'])
+                    && preg_match($uri, $path)
                 ) {
                     return true;
                 }

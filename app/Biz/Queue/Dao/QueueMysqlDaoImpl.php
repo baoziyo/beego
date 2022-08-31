@@ -15,9 +15,9 @@ use Hyperf\ModelCache\Cacheable;
 
 /**
  * @property int $id
- * @property Carbon $sendTime
- * @property Carbon $createdTime
- * @property Carbon $updatedTime
+ * @property Carbon $sendTime 发送时间
+ * @property Carbon $createdTime 创建时间
+ * @property Carbon $updatedTime 更新时间
  */
 class QueueMysqlDaoImpl extends BaseDaoImpl
 {
@@ -26,7 +26,7 @@ class QueueMysqlDaoImpl extends BaseDaoImpl
     protected ?string $table = 'queue_mysql';
 
     protected array $fillable = [
-        'id', 'sendTime', 'createdTime', 'updatedTime',
+        'id', 'sendTime',
     ];
 
     protected array $casts = [

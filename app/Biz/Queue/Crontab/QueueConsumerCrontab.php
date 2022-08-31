@@ -13,7 +13,7 @@ use App\Biz\Queue\Service\QueueMysqlService;
 use App\Core\Crontab\BaseCrontab;
 use Hyperf\Crontab\Annotation\Crontab;
 
-#[Crontab(rule: '* * * * *', name: 'queueConsumer', callback: 'execute', memo: '消耗mysql队列任务')]
+#[Crontab(rule: '* * * * *', name: 'queueConsumer', callback: 'execute', memo: '消耗mysql队列任务', enable: 'isEnable')]
 class QueueConsumerCrontab extends BaseCrontab
 {
     public function isEnable(): bool
@@ -21,9 +21,10 @@ class QueueConsumerCrontab extends BaseCrontab
         return env('QUEUE_MYSQL', false);
     }
 
-    protected function execute(): bool
+    public function execute(): bool
     {
         $this->getQueueMysqlService()->consumer();
+
         return true;
     }
 

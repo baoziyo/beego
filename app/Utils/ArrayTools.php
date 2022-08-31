@@ -22,9 +22,8 @@ class ArrayTools extends App
 
     /**
      * 多维数据按键值进行升序排序.
-     * @param mixed $array
      */
-    public static function arrayKsort(&$array): array
+    public static function arrayKsort(mixed &$array): array
     {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
@@ -49,52 +48,46 @@ class ArrayTools extends App
         return $newArray;
     }
 
-    public static function group(array $array, $key): array
+    public static function removeVoid(array $array): array
     {
-        $grouped = [];
-        foreach ($array as $item) {
-            if (empty($grouped[$item[$key]])) {
-                $grouped[$item[$key]] = [];
-            }
-            $grouped[$item[$key]][] = $item;
-        }
-        return $grouped;
-    }
-
-    public static function removeVoid($array): array
-    {
-        if (empty($array) || !is_array($array)) {
-            return $array;
-        }
         foreach ($array as $key => &$value) {
             if ($value === '' || $value === null) {
                 unset($array[$key]);
             }
-            $value = self::removeVoid($value);
+            if (is_array($value)) {
+                $value = self::removeVoid($value);
+            }
         }
         return $array;
     }
 
-    public static function conversionUcwords($array, $model = true): array
+    public static function conversionKeyUcWords(array $array, bool $model = true): array
     {
-        if (is_array($array)) {
-            $newArray = [];
-            foreach ($array as $key => $value) {
-                if ($model && strpos((string)$key, '_')) {
-                    $key = ucwords(str_replace('_', ' ', $key));
-                    $key = str_replace(' ', '', lcfirst($key));
-                }
-                if (!$model) {
-                    $key = preg_replace_callback('/([A-Z]+)/', static function ($matches) {
-                        return '_' . strtolower($matches[0]);
-                    }, $key);
+        $newArray = [];
+        foreach ($array as $key => $value) {
+            if ($model && strpos((string)$key, '_')) {
+                $key = ucwords(str_replace('_', ' ', $key));
+                $key = str_replace(' ', '', lcfirst($key));
+            }
+
+            if (!$model) {
+                $key = preg_replace_callback('/([A-Z]+)/', static function ($matches) {
+                    return implode(array_map(static function ($item) {
+                        return '_' . strtolower($item);
+                    }, str_split($matches[0])));
+                }, $key);
+                if ($key !== null && preg_replace('/_{2,}/', '_', $key) !== null) {
                     $key = trim(preg_replace('/_{2,}/', '_', $key), '_');
                 }
-                $newArray[$key] = self::conversionUcwords($value, $model);
             }
-        } else {
-            return $array;
+
+            if (is_array($value)) {
+                $newArray[$key] = self::conversionKeyUcWords($value, $model);
+            } else {
+                $newArray[$key] = $value;
+            }
         }
+
         return $newArray;
     }
 }

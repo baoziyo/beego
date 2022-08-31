@@ -17,21 +17,21 @@ use Hyperf\Snowflake\Concern\Snowflake;
 
 /**
  * @property int $id
- * @property string $name
- * @property string $status
- * @property string $link
- * @property string $type
- * @property int $parentId
- * @property string $module
- * @property string $controller
- * @property string $node
- * @property string $option
- * @property string $style
- * @property string $icon
- * @property int $sort
- * @property Carbon $createdTime
- * @property Carbon $updatedTime
- * @property Carbon $deletedTime
+ * @property string $name 菜单名称
+ * @property string $status 状态:enabled 启用;disabled 禁用;
+ * @property string $link 路由
+ * @property string $type 类型:module 模块;controller 控制器;node 节点;option 操作;
+ * @property int $parentId 父id
+ * @property string $module 模块
+ * @property string $controller 控制器
+ * @property string $node 节点
+ * @property string $option 操作
+ * @property string $style 样式
+ * @property string $icon 图标
+ * @property int $sort 排序
+ * @property Carbon $createdTime 创建时间
+ * @property Carbon $updatedTime 更新时间
+ * @property Carbon $deletedTime 删除时间
  */
 class RoleRbacNodeDaoImpl extends BaseDaoImpl
 {
@@ -43,7 +43,7 @@ class RoleRbacNodeDaoImpl extends BaseDaoImpl
 
     protected array $fillable = [
         'id', 'name', 'status', 'link', 'type', 'parentId', 'module', 'controller', 'node', 'option', 'style',
-        'icon', 'sort', 'createdTime', 'updatedTime', 'deletedTime',
+        'icon', 'sort',
     ];
 
     protected array $casts = [

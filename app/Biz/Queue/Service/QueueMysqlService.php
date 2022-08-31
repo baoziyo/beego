@@ -5,7 +5,7 @@
  * ogg sit down and start building bugs.
  * Author: Ogg <baoziyoo@gmail.com>.
  */
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace App\Biz\Queue\Service;
 

@@ -27,6 +27,7 @@ class CaptchaServiceImpl extends BaseServiceImpl implements CaptchaService
         $captcha = $captcha->generateCode();
         $key = Str::random(64);
         $this->biz->getRedis()->set($key, $captcha['code'], self::TTL);
+
         return ['base64' => $captcha['base64'], 'key' => $key];
     }
 
@@ -35,9 +36,10 @@ class CaptchaServiceImpl extends BaseServiceImpl implements CaptchaService
      */
     public function validatorCode(string $code, string $key): bool
     {
-        if (!$this->biz->getRedis()->has($key)) {
+        if (!$this->biz->getRedis()->exists($key)) {
             throw new CaptchaException(CaptchaException::CAPTCHA_EMPTY);
         }
+
         return $this->biz->getRedis()->get($key) === $code;
     }
 }

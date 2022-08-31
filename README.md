@@ -17,7 +17,7 @@
 复制`.env.example`为`.env.testing`
 ### 命令
 * 单元测试 `composer test`
-* 生成单元测试覆盖率 `phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always`
+* 生成单元测试覆盖率 `composer test-view`
 
 ## 环境指南
 

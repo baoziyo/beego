@@ -15,7 +15,6 @@ use App\Biz\Queue\Type\Queue\RabbitMq;
 use App\Biz\Queue\Type\Queue\Redis;
 use App\Core\Biz\Service\BaseService;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Model;
 
 interface QueueService extends BaseService
 {

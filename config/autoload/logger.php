@@ -13,7 +13,7 @@ return [
             'class' => \App\Biz\Log\Handler\RotatingFileHandler::class,
             'constructor' => [
                 'filename' => BASE_PATH . '/runtime/logs/%filename%.log',
-                'maxFiles' => (int)env('LOG_MAX_FILES', 30),
+                'maxFiles' => (int)env('LOG_SAVE_MAX_DAY', 30),
             ],
         ],
         'formatter' => [

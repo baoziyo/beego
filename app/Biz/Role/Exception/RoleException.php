@@ -5,7 +5,7 @@
  * ogg sit down and start building bugs.
  * Author: Ogg <baoziyoo@gmail.com>.
  */
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace App\Biz\Role\Exception;
 
@@ -19,6 +19,7 @@ class RoleException extends BaseErrorException
      * @Tip("找不到该权限组.")
      */
     public const NOT_FOUND = 500002000;
+
     /**
      * @Tip("暂无此操作权限.")
      */

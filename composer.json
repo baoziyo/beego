@@ -41,15 +41,15 @@
     "hyperf/filesystem": "~3.0.0"
   },
   "require-dev": {
+    "filp/whoops": "^2.14",
     "friendsofphp/php-cs-fixer": "^3.0",
     "hyperf/code-generator": "^0.3.3",
     "hyperf/devtool": "~3.0.0",
     "hyperf/testing": "~3.0.0",
+    "hyperf/watcher": "~3.0.0",
     "mockery/mockery": "^1.0",
     "phpstan/phpstan": "^0.12",
-    "swoole/ide-helper": "^4.5",
-    "filp/whoops": "^2.14",
-    "hyperf/watcher": "~3.0.0"
+    "swoole/ide-helper": "^4.5"
   },
   "suggest": {
     "ext-openssl": "Required to use HTTPS.",
@@ -84,6 +84,7 @@
       "rm -rf runtime/container"
     ],
     "test": "co-phpunit --prepend test/bootstrap.php -c phpunit.xml --colors=always",
+    "test-view": "rm -rf runtime/tests/cover-html && phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit --prepend test/bootstrap.php -c phpunit.xml --colors=always",
     "cs-fix": "php-cs-fixer fix $1",
     "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./app ./config",
     "start": [

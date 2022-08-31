@@ -12,15 +12,15 @@ namespace App\Biz\User\Service\Impl;
 use App\Biz\User\Config\TokenStrategy;
 use App\Biz\User\Exception\TokenException;
 use App\Biz\User\Service\TokenService;
+use App\Biz\User\Service\UserService;
 use App\Core\Biz\Service\Impl\BaseServiceImpl;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TokenServiceImpl extends BaseServiceImpl implements TokenService
 {
-    public function generateToken(array $params): array
+    public function generateToken(string $type, array $params): array
     {
-        $type = $params['type'];
-        $token = $this->getTokenStrategy($type)->generateToken($params);
+        $user = $this->getUserService()->login($params);
+        $token = $this->getTokenStrategy($type)->generateToken($user->id);
 
         return array_merge([
             'type' => $type,
@@ -37,9 +37,9 @@ class TokenServiceImpl extends BaseServiceImpl implements TokenService
         ], $token);
     }
 
-    public function validate(string $type, RequestInterface $request): array
+    public function validate(string $type, string $token): int
     {
-        return $this->getTokenStrategy($type)->validate($request);
+        return $this->getTokenStrategy($type)->validate($token);
     }
 
     private function getTokenStrategy(string $type): TokenStrategy
@@ -49,5 +49,10 @@ class TokenServiceImpl extends BaseServiceImpl implements TokenService
         }
 
         return make(self::TOKEN_STRATEGY_TYPE[$type]);
+    }
+
+    private function getUserService(): UserService
+    {
+        return $this->biz->getService('User:User');
     }
 }

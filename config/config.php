@@ -8,7 +8,6 @@
 declare(strict_types=1);
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Log\LogLevel;
 
 return [
     'app_name' => env('APP_NAME', 'skeleton'),

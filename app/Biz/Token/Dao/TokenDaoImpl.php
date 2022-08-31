@@ -15,11 +15,11 @@ use Hyperf\ModelCache\Cacheable;
 
 /**
  * @property int $id
- * @property string $key
- * @property string $value
- * @property int $expires
- * @property Carbon $expiresTime
- * @property Carbon $createdTime
+ * @property string $key token 名称
+ * @property string $value token 值
+ * @property int $expires 有效期(秒)
+ * @property Carbon $expiresTime 过期时间
+ * @property Carbon $createdTime 创建时间
  */
 class TokenDaoImpl extends BaseDaoImpl
 {
@@ -32,7 +32,7 @@ class TokenDaoImpl extends BaseDaoImpl
     protected ?string $table = 'token';
 
     protected array $fillable = [
-        'id', 'key', 'value', 'expires', 'expiresTime', 'createdTime',
+        'id', 'key', 'value', 'expires', 'expiresTime',
     ];
 
     protected array $casts = [

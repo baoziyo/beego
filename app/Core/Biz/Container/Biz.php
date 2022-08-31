@@ -11,18 +11,19 @@ namespace App\Core\Biz\Container;
 
 use GuzzleHttp\Client;
 use Hyperf\Amqp\Producer;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
-use Psr\SimpleCache\CacheInterface;
+use Hyperf\Redis\RedisProxy;
 use League\Flysystem\Filesystem;
+use Psr\Container\ContainerInterface;
 
 interface Biz
 {
     public function getVersion(string $appointVersion = ''): string;
 
-    public function getService(string $serviceName, string $version = '');
+    public function getService(string $serviceName, string $version = ''): mixed;
 
-    public function getRedis(string $poolName = 'default'): CacheInterface;
+    public function getRedis(string $poolName = 'default'): RedisProxy;
 
     public function getClient(array $config = [], bool $grayLog = true): Client;
 
@@ -35,4 +36,6 @@ interface Biz
     public function getConfig(): ConfigInterface;
 
     public function getFileSystem(string $adapterName = 'local'): Filesystem;
+
+    public function getContext(): Context;
 }

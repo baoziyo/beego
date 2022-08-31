@@ -20,7 +20,8 @@ class LoginController extends AbstractController
     public function post(): PsrResponseInterface
     {
         $params = $this->request->post();
-        $token = $this->getTokenService()->generateToken($params);
+        $type = $this->request->getHeaderLine('Token-Type');
+        $token = $this->getTokenService()->generateToken($type, $params);
 
         return $this->buildRequest($token);
     }

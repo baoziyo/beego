@@ -14,6 +14,7 @@ use App\Utils\ErrorTools;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Logger\Logger;
 use Hyperf\Logger\LoggerFactory;
 use Psr\Container\ContainerInterface;
 
@@ -24,7 +25,7 @@ class FailToExecuteCrontabListener implements ListenerInterface
 
     protected ContainerInterface $container;
 
-    protected LoggerFactory $logger;
+    protected Logger $logger;
 
     public function __construct(Biz $biz, ContainerInterface $container)
     {
@@ -46,7 +47,6 @@ class FailToExecuteCrontabListener implements ListenerInterface
     public function process(object $event): void
     {
         $crontab = $event->crontab->getName();
-        $crontabClass = get_class($crontab);
-        $this->logger->error(sprintf('Crontab Failed %s.', $crontabClass ?? $crontab), ErrorTools::generateErrorInfo($event->throwable));
+        $this->logger->error(sprintf('Crontab Failed %s.', $crontab), ErrorTools::generateErrorInfo($event->throwable));
     }
 }

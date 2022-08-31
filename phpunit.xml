@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Sunny 2022/8/8 上午11:36
-  ~ ogg sit down and start building bugs.
-  ~ Author: Ogg <baoziyoo@gmail.com>.
-  -->
-
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
          bootstrap="./test/bootstrap.php"
@@ -14,14 +8,37 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
-    <testsuites>
-        <testsuite name="Tests">
-            <directory suffix="Test.php">./test</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
+  <php>
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <testsuites>
+    <testsuite name="Tests">
+      <directory suffix="Test.php">./test</directory>
+    </testsuite>
+  </testsuites>
+  <coverage includeUncoveredFiles="true"
+            processUncoveredFiles="true"
+            pathCoverage="false"
+            ignoreDeprecatedCodeUnits="true"
+            disableCodeCoverageIgnore="false">
+    <include>
+      <directory suffix=".php">./app</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">./runtime/container/proxy</directory>
+      <directory suffix=".php">./app/Controller</directory>
+      <directory suffix=".php">./app/Listener</directory>
+      <directory suffix=".php">./app/Middleware</directory>
+      <directory suffix=".php">./app/Exception</directory>
+      <directory suffix=".php">./app/Core/Amqp</directory>
+      <directory suffix=".php">./app/Core/Crontab</directory>
+      <directory suffix=".php">./app/Core/Queue</directory>
+      <directory suffix=".php">./app/Core/Validation</directory>
+      <!--<directory suffix=".php">./app/Biz/Amqp</directory>-->
+      <!--<file>./app/Biz/Biz/Container/Biz.php</file>-->
+    </exclude>
+    <report>
+      <html outputDirectory="runtime/tests/cover-html/" lowUpperBound="50" highLowerBound="90"/>
+    </report>
+  </coverage>
 </phpunit>

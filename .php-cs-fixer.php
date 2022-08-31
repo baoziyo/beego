@@ -72,6 +72,8 @@ return (new PhpCsFixer\Config())->setRiskyAllowed(true)
         'multiline_comment_opening_closing' => true,
         'cast_spaces' => false,
         'method_chaining_indentation' => false,
+        'no_superfluous_phpdoc_tags' => false,
+        'php_unit_test_class_requires_covers' => false,
     ])
     ->setFinder(PhpCsFixer\Finder::create()
         ->exclude('public')

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace App\Exception\Handler;
 
 use App\Core\Biz\Container\Biz;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -24,15 +23,15 @@ use Psr\Http\Message\ResponseInterface;
 
 class ErrorExceptionHandler extends ExceptionHandler
 {
-    /**
-     * @Inject
-     */
     protected RequestInterface $request;
 
-    /**
-     * @Inject
-     */
     protected Biz $biz;
+
+    public function __construct(RequestInterface $request, Biz $biz)
+    {
+        $this->request = $request;
+        $this->biz = $biz;
+    }
 
     public function handle(\Throwable $throwable, ResponseInterface $response): ResponseInterface
     {
@@ -57,8 +56,8 @@ class ErrorExceptionHandler extends ExceptionHandler
 
         $this->stopPropagation();
 
-        $status = substr((string) $throwable->getCode(), 0, 3);
-        $status = $status <= 0 ? 500 : (int) $status;
+        $status = substr((string)$throwable->getCode(), 0, 3);
+        $status = $status <= 0 ? 500 : (int)$status;
 
         return $response->withStatus($status)->withAddedHeader('Content-Type', 'application/json')->withBody(new SwooleStream($data));
     }

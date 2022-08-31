@@ -37,4 +37,6 @@ interface UserService extends BaseService
     public function login(array $data): UserDaoImpl;
 
     public function getUser(mixed $id): UserDaoImpl;
+
+    public function getCurrentUser(): UserDaoImpl;
 }

@@ -89,6 +89,7 @@ abstract class Filter
         if (method_exists($this, $property)) {
             $data = $this->{$property}($data);
         }
+
         return $data;
     }
 
@@ -96,22 +97,27 @@ abstract class Filter
     {
         $property = $this->mode . 'Fields';
         if (property_exists($this, $this->fieldsName) && $this->{$this->fieldsName}) {
-            if (!empty($data['list'])) {
+            if (isset($data['list'])) {
                 foreach ($data['list'] as &$item) {
                     $item = ArrayTools::parts($item, $this->{$this->fieldsName});
-                    if (method_exists($this, $property)) {
-                        $item = $this->{$property}($item);
-                    }
                 }
+                unset($item);
+
+                $this->{$this->fieldsName} = array_merge($this->{$this->fieldsName}, ['count', 'list']);
+
+                $data = $this->simple($data);
             } else {
                 foreach ($data as &$item) {
                     $item = ArrayTools::parts($item, $this->{$this->fieldsName});
-                    if (method_exists($this, $property)) {
-                        $item = $this->{$property}($item);
-                    }
                 }
+                unset($item);
             }
         }
+
+        if (method_exists($this, $property)) {
+            $data = $this->{$property}($data);
+        }
+
         return $data;
     }
 }

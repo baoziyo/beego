@@ -19,6 +19,6 @@ class TokenValidation extends BaseValidation
     ];
 
     protected array $scene = [
-        'jwt' => ['userName', 'password']
+        'jwt' => ['userName', 'password'],
     ];
 }

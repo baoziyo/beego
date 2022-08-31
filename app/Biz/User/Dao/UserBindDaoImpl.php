@@ -17,13 +17,13 @@ use Hyperf\Snowflake\Concern\Snowflake;
 
 /**
  * @property int $id
- * @property int $userId
- * @property string $type
- * @property string $fromId
- * @property string $fromKey
- * @property Carbon $createdTime
- * @property Carbon $updatedTime
- * @property Carbon $deletedTime
+ * @property int $userId 用户id
+ * @property string $type 绑定类型:wechat 微信;
+ * @property string $fromId 来源方用户id
+ * @property string $fromKey 来源方用户key
+ * @property Carbon $createdTime 创建时间
+ * @property Carbon $updatedTime 更新时间
+ * @property Carbon $deletedTime 删除时间
  */
 class UserBindDaoImpl extends BaseDaoImpl
 {
@@ -34,7 +34,7 @@ class UserBindDaoImpl extends BaseDaoImpl
     protected ?string $table = 'user_bind';
 
     protected array $fillable = [
-        'id', 'userId', 'type', 'fromId', 'fromKey', 'createdTime', 'updatedTime', 'deletedTime',
+        'id', 'userId', 'type', 'fromId', 'fromKey',
     ];
 
     protected array $casts = [
@@ -42,5 +42,6 @@ class UserBindDaoImpl extends BaseDaoImpl
         'userId' => 'integer',
         'createdTime' => 'datetime',
         'updatedTime' => 'datetime',
+        'deletedTime' => 'datetime',
     ];
 }
