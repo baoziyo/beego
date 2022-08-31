@@ -21,12 +21,17 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath
           ini-values: opcache.enable_cli=0
           coverage: none
+      - name: Get Swoole Version
+        shell: bash
+        id: vars
+        run: |
+          swoole_version=$(response=$(curl -s -i https://github.com/swoole/swoole-src/releases/latest | grep 'location' | head -n 1) && echo ${response##*/v})
+          echo "::set-output name=swoole_version::$swoole_version"
       - name: Setup php
         run: |
           sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
-          swoole_version=$(response=$(curl -s -i https://github.com/swoole/swoole-src/releases/latest | grep 'location' | head -n 1) && echo ${response##*/v})
-          wget https://github.com/swoole/swoole-src/archive/$swoole_version.tar.gz -O swoole.tar.gz
+          wget https://github.com/swoole/swoole-src/archive/${{steps.vars.outputs.swoole_version}}.tar.gz -O swoole.tar.gz
           mkdir -p swoole
           tar -xf swoole.tar.gz -C swoole --strip-components=1
           rm swoole.tar.gz
