@@ -1,4 +1,5 @@
 # beego
+[![Build Status](https://app.travis-ci.com/baoziyo/whell-hyperf.svg?branch=master)](https://app.travis-ci.com/baoziyo/whell-hyperf)
 
 ## 启动
 

@@ -1,0 +1,29 @@
+language: php
+
+sudo: required
+
+php:
+  - 8.1
+
+services:
+  - mysql
+  - redis
+  - docker
+
+before_install:
+  - mysql -e 'CREATE DATABASE `test` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci'
+  - docker run -d --restart=always --name rabbitmq -p 4369:4369 -p 5672:5672 -p 15672:15672 -p 25672:25672 rabbitmq:management-alpine
+
+install:
+  - cd $TRAVIS_BUILD_DIR
+  - bash .travis/swoole.install.sh
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
+  - phpenv config-add .travis/ci.ini
+
+before_script:
+  - cd $TRAVIS_BUILD_DIR
+  - composer install
+
+script:
+  - composer analyse src
+  - composer test
