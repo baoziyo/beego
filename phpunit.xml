@@ -34,6 +34,8 @@
       <directory suffix=".php">./app/Core/Crontab</directory>
       <directory suffix=".php">./app/Core/Queue</directory>
       <directory suffix=".php">./app/Core/Validation</directory>
+      <directory suffix=".php">./app/Core/Guzzle</directory>
+      <directory suffix=".php">./app/Core/Log</directory>
       <!--<directory suffix=".php">./app/Biz/Amqp</directory>-->
       <!--<file>./app/Biz/Biz/Container/Biz.php</file>-->
     </exclude>

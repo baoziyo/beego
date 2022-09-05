@@ -1,4 +1,4 @@
-name: PHPUnit for whell
+name: PHPUnit for beego
 
 on:
   push:

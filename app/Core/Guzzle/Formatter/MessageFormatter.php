@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace App\Biz\Guzzle\Formatter;
+namespace App\Core\Guzzle\Formatter;
 
 /**
  * Formats log messages using variable substitutions for requests, responses,
@@ -40,5 +40,5 @@ namespace App\Biz\Guzzle\Formatter;
  */
 class MessageFormatter extends \GuzzleHttp\MessageFormatter
 {
-    public const CLF = '{hostname} {req_header_User-Agent} - [{date_common_log}] "{method} {target} HTTP/{version}" {code} {res_header_Content-Length}' . PHP_EOL . 'request:{request}' . 'res_body:{res_body}';
+    public const CLF = '{hostname} {req_header_User-Agent} - [{date_common_log}] "{method} {target} HTTP/{version}" {code} {res_header_Content-Length}' . 'request:{request}' . 'res_body:{res_body}' . PHP_EOL;
 }

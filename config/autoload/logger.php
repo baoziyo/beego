@@ -10,14 +10,14 @@ declare(strict_types=1);
 return [
     'default' => [
         'handler' => [
-            'class' => \App\Biz\Log\Handler\RotatingFileHandler::class,
+            'class' => \App\Core\Log\Handler\RotatingFileHandler::class,
             'constructor' => [
                 'filename' => BASE_PATH . '/runtime/logs/%filename%.log',
                 'maxFiles' => (int)env('LOG_SAVE_MAX_DAY', 30),
             ],
         ],
         'formatter' => [
-            'class' => \App\Biz\Log\Formatter\LineFormatter::class,
+            'class' => \App\Core\Log\Formatter\LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',

@@ -14,8 +14,9 @@ use App\Core\Biz\Service\BaseService;
 interface CaptchaService extends BaseService
 {
     public const TTL = 7200;
+    public const PREFIX = 'captcha:';
 
     public function generateCaptcha(): array;
 
-    public function validatorCode(string $code, string $key): bool;
+    public function validatorCode(mixed $code, string $key): bool;
 }

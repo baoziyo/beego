@@ -25,7 +25,7 @@ class CaptchaServiceImpl extends BaseServiceImpl implements CaptchaService
     {
         $captcha = new Captcha();
         $captcha = $captcha->generateCode();
-        $key = Str::random(64);
+        $key = self::PREFIX . Str::random(64);
         $this->biz->getRedis()->set($key, $captcha['code'], self::TTL);
 
         return ['base64' => $captcha['base64'], 'key' => $key];
@@ -34,12 +34,16 @@ class CaptchaServiceImpl extends BaseServiceImpl implements CaptchaService
     /**
      * @throws InvalidArgumentException
      */
-    public function validatorCode(string $code, string $key): bool
+    public function validatorCode(mixed $code, string $key): bool
     {
-        if (!$this->biz->getRedis()->exists($key)) {
+        $redisCode = $this->biz->getRedis()->get($key);
+        if ($redisCode === false) {
             throw new CaptchaException(CaptchaException::CAPTCHA_EMPTY);
         }
 
-        return $this->biz->getRedis()->get($key) === $code;
+        $response = strtolower($redisCode) === strtolower($code);
+        $this->biz->getRedis()->del($key);
+
+        return $response;
     }
 }

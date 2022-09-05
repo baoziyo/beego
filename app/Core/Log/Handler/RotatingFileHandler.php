@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace App\Biz\Log\Handler;
+namespace App\Core\Log\Handler;
 
 use Monolog\Level;
 use Monolog\LogRecord;

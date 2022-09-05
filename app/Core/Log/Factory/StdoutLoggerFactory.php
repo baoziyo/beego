@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace App\Biz\Log\Factory;
+namespace App\Core\Log\Factory;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Logger\LoggerFactory;

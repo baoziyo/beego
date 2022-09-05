@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace App\Biz\Guzzle\Middleware;
+namespace App\Core\Guzzle\Middleware;
 
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\MessageFormatterInterface;

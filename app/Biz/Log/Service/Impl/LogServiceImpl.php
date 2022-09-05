@@ -63,7 +63,7 @@ class LogServiceImpl extends BaseServiceImpl implements LogService
         $this->log(LogLevel::DEBUG, $message, $context, $sendGaryLog);
     }
 
-    public function log($level, $message, array $context = [], bool $sendGaryLog = true): void
+    public function log(mixed $level, $message, array $context = [], bool $sendGaryLog = true): void
     {
         $this->logger = $this->container->get(LoggerFactory::class)->get(env('APP_NAME'));
         $this->logger->log($level, $message, $context);

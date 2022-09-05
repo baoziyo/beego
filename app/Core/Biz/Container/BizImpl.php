@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace App\Core\Biz\Container;
 
-use App\Biz\Guzzle\Formatter\MessageFormatter;
-use App\Biz\Guzzle\Middleware\Middleware;
+use App\Core\Guzzle\Formatter\MessageFormatter;
+use App\Core\Guzzle\Middleware\Middleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Amqp\Producer;

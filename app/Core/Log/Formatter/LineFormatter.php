@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace App\Biz\Log\Formatter;
+namespace App\Core\Log\Formatter;
 
 class LineFormatter extends \Monolog\Formatter\LineFormatter
 {

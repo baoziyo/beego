@@ -50,7 +50,7 @@ interface LogService extends LoggerInterface
 
     public function debug($message, array $context = [], bool $sendGaryLog = true): void;
 
-    public function log($level, $message, array $context = [], bool $sendGaryLog = true): void;
+    public function log(mixed $level, $message, array $context = [], bool $sendGaryLog = true): void;
 
     public function requestLog(RequestInterface $request, ResponseInterface $response, array $responseText = []): void;
 
