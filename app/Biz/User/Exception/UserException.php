@@ -34,4 +34,14 @@ class UserException extends BaseErrorException
      * @Tip("找不到该登陆用户.")
      */
     public const NOT_FOUND_LOGIN_USER = 500004003;
+
+    /**
+     * @Tip("密码错误.")
+     */
+    public const USER_PASSWORD_FIELD_ERROR = 500004004;
+
+    /**
+     * @Tip("验证码错误.")
+     */
+    public const CAPTCHA_FIELD_ERROR = 500004005;
 }

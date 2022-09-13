@@ -51,4 +51,6 @@ jobs:
       - name: Run Test Cases
         run: |
           composer install
+          cp .env.example .env.test
+          sed -i 's/APP_ENV=.*/APP_ENV=test/g' .env.test
           composer test

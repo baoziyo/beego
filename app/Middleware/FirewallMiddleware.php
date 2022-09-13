@@ -66,6 +66,8 @@ class FirewallMiddleware implements MiddlewareInterface
         if ($type !== '' && $token !== '') {
             $userId = $this->getTokenService()->validate($type, $token);
             $this->biz->getContext()::set('currentUserId', $userId);
+        } else {
+            $this->biz->getContext()::set('currentUserId', 0);
         }
 
         if (env('APP_ENV') === 'test' || (!preg_match('/^\/admin(.*)/', $path) && $this->checkWhitelists($path))) {

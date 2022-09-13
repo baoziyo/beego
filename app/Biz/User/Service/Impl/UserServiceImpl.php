@@ -102,21 +102,22 @@ class UserServiceImpl extends BaseServiceImpl implements UserService
         return $this->getUser($currentUserId);
     }
 
-    private function getUserSourceStrategy(string $type): UserSourceStrategy
+    public function getByName(string $name): UserDaoImpl
     {
-        if (!isset(self::USER_SOURCE_STRATEGY_TYPE[$type])) {
-            throw new UserException(UserException::TOKEN_TYPE_ERROR);
-        }
+        $userId = UserDaoImpl::query()->where('name', $name)->value('id');
 
-        return make(self::USER_SOURCE_STRATEGY_TYPE[$type], [$this->biz]);
+        return $this->getUser($userId);
     }
 
     /**
      * @return array[password,salt]
      */
-    private function generatePassword(string $password): array
+    public function generatePassword(string $password, string $salt = ''): array
     {
-        $salt = Str::random();
+        if ($salt === '') {
+            $salt = Str::random();
+        }
+
         $password .= '{' . $salt . '}';
         $digest = hash('sha512', $password, true);
         for ($i = 1; $i < 5000; ++$i) {
@@ -124,6 +125,43 @@ class UserServiceImpl extends BaseServiceImpl implements UserService
         }
 
         return [base64_encode($digest), $salt];
+    }
+
+    public function search(array $conditions = [], array $order = ['id', 'desc'], int $start = 0, int $limit = 10): array
+    {
+        $conditions = $this->buildConditions($conditions);
+        $users = UserDaoImpl::query()
+            ->where($conditions)
+            ->orderBy(...$order)
+            ->skip($start)
+            ->take($limit)
+            ->get();
+
+        if ($users->isEmpty()) {
+            return [];
+        }
+
+        return $users->toArray();
+    }
+
+    public function count(array $conditions = []): int
+    {
+        $conditions = $this->buildConditions($conditions);
+        return UserDaoImpl::query()->where($conditions)->count();
+    }
+
+    private function buildConditions(array $conditions = []): array
+    {
+        return $conditions;
+    }
+
+    private function getUserSourceStrategy(string $type): UserSourceStrategy
+    {
+        if (!isset(self::USER_SOURCE_STRATEGY_TYPE[$type])) {
+            throw new UserException(UserException::TOKEN_TYPE_ERROR);
+        }
+
+        return make(self::USER_SOURCE_STRATEGY_TYPE[$type], [$this->biz]);
     }
 
     private function validateSource(string $type): bool

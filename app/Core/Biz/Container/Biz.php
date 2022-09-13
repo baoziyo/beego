@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace App\Core\Biz\Container;
 
+use App\Biz\User\Dao\UserDaoImpl;
 use GuzzleHttp\Client;
 use Hyperf\Amqp\Producer;
 use Hyperf\Context\Context;
@@ -27,7 +28,7 @@ interface Biz
 
     public function getClient(array $config = [], bool $grayLog = true): Client;
 
-    public function getCurrentUser(): array;
+    public function getCurrentUser(): UserDaoImpl;
 
     public function getAmqp(): Producer;
 

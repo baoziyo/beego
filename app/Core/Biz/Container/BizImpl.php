@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace App\Core\Biz\Container;
 
+use App\Biz\User\Dao\UserDaoImpl;
+use App\Biz\User\Service\UserService;
 use App\Core\Guzzle\Formatter\MessageFormatter;
 use App\Core\Guzzle\Middleware\Middleware;
 use GuzzleHttp\Client;
@@ -23,14 +25,12 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use League\Flysystem\Filesystem;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\SimpleCache\CacheInterface;
 
 class BizImpl implements Biz
 {
@@ -106,13 +106,9 @@ class BizImpl implements Biz
         return make(ClientFactory::class)->create(array_merge(['handler' => $handlerStack, 'http_errors' => false], $config));
     }
 
-    public function getCurrentUser(): array
+    public function getCurrentUser(): UserDaoImpl
     {
-        if ($this->context::get('user') === null) {
-            return [];
-        }
-
-        return Json::decode($this->context::get('user'));
+        return $this->getUserService()->getCurrentUser();
     }
 
     public function getAmqp(): Producer
@@ -138,5 +134,10 @@ class BizImpl implements Biz
     public function getContext(): Context
     {
         return $this->context;
+    }
+
+    private function getUserService(): UserService
+    {
+        return $this->getService('User:User');
     }
 }

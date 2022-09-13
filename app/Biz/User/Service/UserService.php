@@ -39,4 +39,12 @@ interface UserService extends BaseService
     public function getUser(mixed $id): UserDaoImpl;
 
     public function getCurrentUser(): UserDaoImpl;
+
+    public function getByName(string $name): UserDaoImpl;
+
+    public function generatePassword(string $password, string $salt = ''): array;
+
+    public function search(array $conditions = [], array $order = ['id', 'desc'], int $start = 0, int $limit = 10): array;
+
+    public function count(array $conditions = []): int;
 }
