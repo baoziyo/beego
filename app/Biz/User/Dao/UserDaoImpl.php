@@ -26,10 +26,20 @@ use Hyperf\Snowflake\Concern\Snowflake;
  * @property string $isAdmin 管理员:enabled 启用;disabled 禁用;
  * @property string $status 状态:enabled 启用;disabled 禁用;
  * @property string $avatar 状态:enabled 启用;disabled 禁用;
- * @property Carbon $lasLoginTime 最后登陆时间
+ * @property Carbon $lastLoginTime 最后登陆时间
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
  * @property Carbon $deletedTime 删除时间
+ * @method void setName(string $field)
+ * @method void setPassword(string $field)
+ * @method void setSalt(string $field)
+ * @method void setPhone(int $field)
+ * @method void setEmail(string $field)
+ * @method void setRole(int $field)
+ * @method void setIsAdmin(string $field)
+ * @method void setStatus(string $field)
+ * @method void setAvatar(string $field)
+ * @method void setLastLoginTime(Carbon $field)
  */
 class UserDaoImpl extends BaseDaoImpl
 {
@@ -41,13 +51,14 @@ class UserDaoImpl extends BaseDaoImpl
 
     protected array $fillable = [
         'id', 'name', 'password', 'salt', 'phone', 'email', 'role', 'status', 'avatar', 'isAdmin', 'avatar',
-        'lasLoginTime',
+        'lastLoginTime',
     ];
 
     protected array $casts = [
         'id' => 'integer',
         'phone' => 'integer',
         'role' => 'integer',
+        'lastLoginTime' => 'datetime',
         'createdTime' => 'datetime',
         'updatedTime' => 'datetime',
         'deletedTime' => 'datetime',

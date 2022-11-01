@@ -30,12 +30,17 @@ class WeChatApp extends BaseUserSource
         $userBind = $this->getUserBindService()->getByFromIdAndType($openId, UserService::USER_SOURCE_WECHAT_APP);
         if ($userBind === null || $userBind->userId === 0) {
             $user = $this->getUserService()->register(array_merge($params, []));
-            $this->getUserBindService()->createOrUpdate($openId, UserService::USER_SOURCE_WECHAT_APP, [
-                'userId' => $user->id,
+            $this->getUserBindService()->createOrUpdate([
+                'type' => UserService::USER_SOURCE_WECHAT_APP,
+                'fromId' => $openId,
+            ], [
+                'userId' => $user['id'],
             ]);
 
             return $user->id;
         }
+
+        $this->getUserService()->update($userBind->userId, ['name' => $params['name'], 'avatar' => $params['avatar']]);
 
         return $userBind->userId;
     }

@@ -19,4 +19,9 @@ class FileException extends BaseErrorException
      * @Tip("无效的文件.")
      */
     public const INVALID_FILE = 500006000;
+
+    /**
+     * @Tip("找不到该文件.")
+     */
+    public const NOT_FOUND = 500006001;
 }

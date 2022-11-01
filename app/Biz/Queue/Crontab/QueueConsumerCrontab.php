@@ -23,6 +23,7 @@ class QueueConsumerCrontab extends BaseCrontab
 
     public function execute(): bool
     {
+        $this->biz->getContext()::set('currentUserId', 1);
         $this->getQueueMysqlService()->consumer();
 
         return true;

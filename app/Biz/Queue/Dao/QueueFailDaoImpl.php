@@ -21,6 +21,10 @@ use Hyperf\ModelCache\Cacheable;
  * @property array $failDetails 失败详情
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
+ * @method void setTargetId(int $field)
+ * @method void setFailUserIds(array $field)
+ * @method void setSendCount(int $field)
+ * @method void setFailDetails(array $field)
  */
 class QueueFailDaoImpl extends BaseDaoImpl
 {

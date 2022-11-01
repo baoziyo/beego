@@ -9,21 +9,33 @@ declare(strict_types=1);
 
 namespace App\Biz\Queue\Service\Impl;
 
-use App\Biz\Queue\Config\BaseMailTemplate;
+use App\Biz\Queue\Config\BaseQueueHandle;
 use App\Biz\Queue\Dao\QueueMysqlDaoImpl;
+use App\Biz\Queue\Exception\QueueException;
 use App\Biz\Queue\Service\QueueFailService;
 use App\Biz\Queue\Service\QueueMysqlService;
 use App\Biz\Queue\Service\QueueService;
 use App\Core\Biz\Service\Impl\BaseServiceImpl;
 use App\Utils\ErrorTools;
+use Carbon\Carbon;
 use Hyperf\Database\Model\Collection;
 use Throwable;
 
 class QueueMysqlServiceImpl extends BaseServiceImpl implements QueueMysqlService
 {
-    public function get(mixed $id): QueueMysqlDaoImpl|null
+    public function get(int $id): QueueMysqlDaoImpl|null
     {
         return QueueMysqlDaoImpl::findFromCache($id);
+    }
+
+    public function getById(int $id): QueueMysqlDaoImpl
+    {
+        $mysql = $this->get($id);
+        if ($mysql === null) {
+            throw new QueueException(QueueException::NOT_FUND_QUEUE_MYSQL);
+        }
+
+        return $mysql;
     }
 
     /**
@@ -35,53 +47,54 @@ class QueueMysqlServiceImpl extends BaseServiceImpl implements QueueMysqlService
         return QueueMysqlDaoImpl::findManyFromCache($ids);
     }
 
-    public function create(array $fields): QueueMysqlDaoImpl
+    public function create(QueueMysqlDaoImpl $dao): QueueMysqlDaoImpl
     {
-        $dao = new QueueMysqlDaoImpl();
-        $dao->fill($fields);
         $dao->save();
 
         return $dao;
     }
 
-    public function producer(mixed $id, int $delay = 0): bool
+    public function producer(int $id, int $delay = 0): bool
     {
-        $this->create([
-            'id' => $id,
-            'sendTime' => time() + $delay,
-        ]);
+        $dao = new QueueMysqlDaoImpl();
+        $dao->setId($id);
+        $dao->setSendTime(Carbon::now()->addSeconds($delay));
+
+        $this->create($dao);
 
         return true;
     }
 
     public function consumer(): bool
     {
-        $queueMysqlLists = QueueMysqlDaoImpl::query()->where('sendTime', '<=', time())->pluck('id');
+        $queueMysqlLists = QueueMysqlDaoImpl::query()->where('sendTime', '<=', Carbon::now())->pluck('id');
         if ($queueMysqlLists->isEmpty()) {
             return true;
         }
 
-        $queueMysqlLists->map(function (QueueMysqlDaoImpl $queueMysqlList) {
-            $queue = $this->getQueueService()->get($queueMysqlList->id);
+        $queueMysqlLists->map(function ($queueId) {
+            $queue = $this->getQueueService()->get($queueId);
 
             if ($queue !== null) {
-                /** @var BaseMailTemplate $template */
-                $template = new $queue->template();
+                $template = $queue->template;
+                /** @var BaseQueueHandle $template */
+                $template = new $template($this->biz);
 
                 try {
                     $queue->sendUserIds = $this->getQueueService()->getNotSendUserIds($queue->id);
                     $response = $template->handle($queue->params);
 
                     if (!empty($response['failUserIds'])) {
-                        $this->getQueueService()->failed($response['id'], $response['failUserIds'], $response['failDetails']);
-                        $this->failed($response['id']);
+                        $this->getQueueService()->failed($queue->id, $response['failUserIds'], $response['failDetails'] ?? []);
+                        $this->failed($queue->id);
                     } else {
-                        $this->getQueueService()->finished($response['id']);
+                        $this->getQueueService()->finished($queue->id);
+                        $this->finished($queue->id);
                     }
                 } catch (Throwable $e) {
                     $this->getQueueService()->failed($queue->id, ['all'], ErrorTools::generateErrorInfo($e));
                     $this->failed($queue->id);
-                    throw new $e();
+                    throw $e;
                 }
             }
         });
@@ -89,7 +102,19 @@ class QueueMysqlServiceImpl extends BaseServiceImpl implements QueueMysqlService
         return true;
     }
 
-    protected function failed(mixed $id): void
+    public function delete(int $id): bool
+    {
+        $mysql = $this->get($id);
+        if ($mysql === null) {
+            return false;
+        }
+
+        $mysql->delete();
+
+        return true;
+    }
+
+    protected function failed(int $id): void
     {
         $queueMysql = $this->get($id);
         if ($queueMysql === null) {
@@ -105,25 +130,20 @@ class QueueMysqlServiceImpl extends BaseServiceImpl implements QueueMysqlService
             return;
         }
 
-        $queueMysql->delete();
+        $this->delete($queueMysql->id);
     }
 
-    protected function finished(mixed $id): void
+    protected function finished(int $id): void
     {
-        $queueMysql = $this->get($id);
-        if ($queueMysql === null) {
-            return;
-        }
-
-        $queueMysql->delete();
+        $this->delete($id);
     }
 
-    private function getQueueService(): QueueService
+    protected function getQueueService(): QueueService
     {
         return $this->biz->getService('Queue:Queue');
     }
 
-    private function getQueueFailService(): QueueFailService
+    protected function getQueueFailService(): QueueFailService
     {
         return $this->biz->getService('Queue:QueueFail');
     }

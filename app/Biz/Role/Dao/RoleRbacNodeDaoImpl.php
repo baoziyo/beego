@@ -32,6 +32,18 @@ use Hyperf\Snowflake\Concern\Snowflake;
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
  * @property Carbon $deletedTime 删除时间
+ * @method void setName(string $field)
+ * @method void setStatus(string $field)
+ * @method void setLink(string $field)
+ * @method void setType(string $field)
+ * @method void setParentId(int $field)
+ * @method void setModule(string $field)
+ * @method void setController(string $field)
+ * @method void setNode(string $field)
+ * @method void setOption(string $field)
+ * @method void setStyle(string $field)
+ * @method void setIcon(string $field)
+ * @method void setSort(int $field)
  */
 class RoleRbacNodeDaoImpl extends BaseDaoImpl
 {

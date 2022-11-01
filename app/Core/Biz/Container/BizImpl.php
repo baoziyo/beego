@@ -21,6 +21,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Guzzle\PoolHandler;
+use Hyperf\Guzzle\RetryMiddleware;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
@@ -103,6 +104,14 @@ class BizImpl implements Biz
             $log = \GuzzleHttp\Middleware::log($this->container->get(LoggerFactory::class)->get('guzzle'), new MessageFormatter(MessageFormatter::CLF));
         }
         $handlerStack->push($log);
+
+        // 默认的重试Middleware
+        $retry = make(RetryMiddleware::class, [
+            'retries' => 1,
+            'delay' => 10,
+        ]);
+        $handlerStack->push($retry->getMiddleware(), 'retry');
+
         return make(ClientFactory::class)->create(array_merge(['handler' => $handlerStack, 'http_errors' => false], $config));
     }
 

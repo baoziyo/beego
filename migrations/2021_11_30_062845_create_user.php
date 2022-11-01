@@ -24,7 +24,7 @@ class CreateUser extends Migration
             $table->string('status')->default('enabled')->nullable(false)->comment('状态:enabled 启用;disabled 禁用;');
             $table->string('isAdmin')->default('disabled')->nullable(false)->comment('管理员:enabled 启用;disabled 禁用;');
             $table->string('avatar', 256)->default('')->nullable(false)->comment('头像');
-            $table->timestamp('lasLoginTime')->nullable()->comment('最后登陆时间');
+            $table->timestamp('lastLoginTime')->nullable()->comment('最后登陆时间');
             $table->timestamp('createdTime')->nullable()->comment('创建时间');
             $table->timestamp('updatedTime')->nullable()->comment('更新时间');
             $table->timestamp('deletedTime')->nullable()->comment('删除时间');

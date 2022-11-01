@@ -29,30 +29,30 @@ class Middleware
             return static function (RequestInterface $request, array $options = []) use ($handler, $logger, $formatter, $logLevel) {
                 return $handler($request, $options)->then(static function ($response) use ($logger, $request, $formatter, $logLevel): ResponseInterface {
                     $message = $formatter->format($request, $response);
-                    $logger->log($logLevel, $message, ['hostname' => gethostname(), 'headers' => $request->getHeaders(), 'time' => date('Y-m-d H:i:s'), 'method' => $request->getMethod(), 'urlTarget' => $request->getRequestTarget(), 'code' => $response ? $response->getStatusCode() : 'NULL', 'requestBody' => $request->getBody()->__toString(), 'responseBody' => $response->getBody()->__toString()]);
+                    $logger->log($logLevel, $message, [
+                        'hostname' => gethostname(),
+                        'headers' => $request->getHeaders(),
+                        'time' => date('Y-m-d H:i:s'),
+                        'method' => $request->getMethod(),
+                        'urlTarget' => $request->getRequestTarget(),
+                        'code' => $response ? $response->getStatusCode() : 'NULL',
+                        'requestBody' => $request->getBody()->__toString(),
+                        'responseBody' => $response->getBody()->__toString(),
+                    ]);
                     return $response;
                 }, static function ($reason) use ($logger, $request, $formatter): PromiseInterface {
                     $response = $reason instanceof RequestException ? $reason->getResponse() : null;
                     $message = $formatter->format($request, $response, P\Create::exceptionFor($reason));
-                    /* @phpstan-ignore-next-line */
-                    $body = $response->getBody();
-                    if (!$response instanceof ResponseInterface) {
-                        $result = 'NULL';
-                    } elseif (!$body->isSeekable()) {
-                        $result = 'RESPONSE_NOT_LOGGEABLE';
-                    } else {
-                        $result = $response->getBody()->__toString();
-                    }
+
                     $logger->error($message, [
                         'hostname' => gethostname(),
                         'headers' => $request->getHeaders(),
                         'time' => date('Y-m-d H:i:s'),
                         'method' => $request->getMethod(),
                         'urlTarget' => $request->getRequestTarget(),
-                        /* @phpstan-ignore-next-line */
-                        'code' => $response->getStatusCode(),
+                        'code' => $response instanceof ResponseInterface ? $response->getStatusCode() : '',
                         'requestBody' => $request->getBody()->__toString(),
-                        'responseBody' => $result,
+                        'responseBody' => $response instanceof ResponseInterface ? $response->getBody()->__toString() : 'null',
                     ]);
                     return P\Create::rejectionFor($reason);
                 });

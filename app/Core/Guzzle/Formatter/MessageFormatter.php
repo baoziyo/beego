@@ -40,5 +40,5 @@ namespace App\Core\Guzzle\Formatter;
  */
 class MessageFormatter extends \GuzzleHttp\MessageFormatter
 {
-    public const CLF = '{hostname} {req_header_User-Agent} - [{date_common_log}] "{method} {target} HTTP/{version}" {code} {res_header_Content-Length}' . 'request:{request}' . 'res_body:{res_body}' . PHP_EOL;
+    public const CLF = PHP_EOL . '{hostname} {req_header_User-Agent} - [{date_common_log}] "{method} {target} HTTP/{version}" {code} {res_header_Content-Length} request:{request} res_body:{res_body}' . PHP_EOL;
 }

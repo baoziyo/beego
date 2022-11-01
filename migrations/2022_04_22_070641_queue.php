@@ -15,6 +15,7 @@ class Queue extends Migration
     {
         Schema::create('queue', static function (Blueprint $table) {
             $table->unsignedBigInteger('id')->nullable(false)->unique('uniq_id');
+            $table->string('name', 512)->nullable(false)->default('')->comment('任务名称');
             $table->string('queue', 32)->nullable(false)->default('')->comment('队列名称');
             $table->string('type', 256)->nullable(false)->default('')->comment('发送通道');
             $table->string('template', 64)->nullable(false)->default('')->comment('模版');

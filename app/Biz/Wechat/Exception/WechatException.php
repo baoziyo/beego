@@ -12,9 +12,7 @@ namespace App\Biz\Wechat\Exception;
 use App\Exception\BaseErrorException;
 use Hyperf\Constants\Annotation\Constants;
 
-/**
- * @Constants
- */
+#[Constants]
 class WechatException extends BaseErrorException
 {
     /**

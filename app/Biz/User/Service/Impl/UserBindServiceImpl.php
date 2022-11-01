@@ -39,17 +39,20 @@ class UserBindServiceImpl extends BaseServiceImpl implements UserBindService
         return $dao;
     }
 
-    public function createOrUpdate(string $fromId, string $type, array $fields): bool
+    public function createOrUpdate(array $where, array $fields): bool
     {
-        $userBind = $this->getByUserIdAndType($fromId, $type);
-        if ($userBind === null) {
-            $this->create($fields);
+        $userBindId = UserBindDaoImpl::query()->where($where)->value('id');
+        if ($userBindId !== null) {
+            $userBind = $this->get($userBindId);
+            if ($userBind !== null) {
+                $userBind->fill($fields);
+                $userBind->save();
+            }
+
             return true;
         }
 
-        $userBind->fill($fields);
-        $userBind->save();
-
+        $this->create($fields);
         return true;
     }
 

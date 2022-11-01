@@ -24,6 +24,10 @@ use Hyperf\Snowflake\Concern\Snowflake;
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
  * @property Carbon $deletedTime 删除时间
+ * @method void setUserId(int $field)
+ * @method void setType(string $field)
+ * @method void setFromId(string $field)
+ * @method void setFromKey(string $field)
  */
 class UserBindDaoImpl extends BaseDaoImpl
 {

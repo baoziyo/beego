@@ -16,6 +16,7 @@ use Hyperf\Snowflake\Concern\Snowflake;
 
 /**
  * @property int $id
+ * @property string $name 任务名称
  * @property string $queue 队列名称
  * @property string $type 发送通道
  * @property string $template 模版
@@ -25,6 +26,14 @@ use Hyperf\Snowflake\Concern\Snowflake;
  * @property int $delay 延迟发送(sec)
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
+ * @method void setName(string $field)
+ * @method void setQueue(string $field)
+ * @method void setType(string $field)
+ * @method void setTemplate(string $field)
+ * @method void setParams(array $field)
+ * @method void setSendUserIds(array $field)
+ * @method void setStatus(string $field)
+ * @method void setDelay(int $field)
  */
 class QueueDaoImpl extends BaseDaoImpl
 {
@@ -34,7 +43,8 @@ class QueueDaoImpl extends BaseDaoImpl
     protected ?string $table = 'queue';
 
     protected array $fillable = [
-        'id', 'queue', 'type', 'template', 'params', 'sendUserIds', 'status', 'delay', 'createdTime', 'updatedTime',
+        'id', 'name', 'queue', 'type', 'template', 'params', 'sendUserIds', 'status', 'delay', 'createdTime',
+        'updatedTime',
     ];
 
     protected array $casts = [

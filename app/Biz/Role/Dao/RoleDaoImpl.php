@@ -23,6 +23,9 @@ use Hyperf\Snowflake\Concern\Snowflake;
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
  * @property Carbon $deletedTime 删除时间
+ * @method void setName(string $field)
+ * @method void setStatus(string $field)
+ * @method void setData(array $field)
  */
 class RoleDaoImpl extends BaseDaoImpl
 {

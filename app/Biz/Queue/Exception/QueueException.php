@@ -28,5 +28,15 @@ class QueueException extends BaseErrorException
     /**
      * @Tip("找不到该通知消息# %s.")
      */
-    public const NOT_FUND_QUEUE_JOB = 500005001;
+    public const NOT_FUND_QUEUE_JOB = 500005002;
+
+    /**
+     * @Tip("找不到该队列失败数据.")
+     */
+    public const NOT_FUND_QUEUE_FAIL = 500005003;
+
+    /**
+     * @Tip("找不到该队列Mysql数据.")
+     */
+    public const NOT_FUND_QUEUE_MYSQL = 500005004;
 }

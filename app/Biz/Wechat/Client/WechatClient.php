@@ -35,7 +35,7 @@ class WechatClient
         ]);
         $response = Json::decode($response->getBody()->__toString());
         if (isset($response['errcode']) && $response['errcode'] !== 0) {
-            throw new WechatException(WechatException::CLIENT_ERROR, null, null, [$response['errcode'], $response['errmsg']]);
+            throw new WechatException(WechatException::CLIENT_ERROR, params: [$response['errcode'], $response['errmsg']]);
         }
 
         return $response;
@@ -52,7 +52,7 @@ class WechatClient
         ]);
         $response = Json::decode($response->getBody()->__toString());
         if (isset($response['errcode']) && $response['errcode'] !== 0) {
-            throw new WechatException(WechatException::CLIENT_ERROR, null, null, [$response['errcode'], $response['errmsg']]);
+            throw new WechatException(WechatException::CLIENT_ERROR, params: [$response['errcode'], $response['errmsg']]);
         }
 
         return $response;
@@ -75,7 +75,25 @@ class WechatClient
         ]);
         $response = Json::decode($response->getBody()->__toString());
         if (isset($response['errcode']) && $response['errcode'] !== 0) {
-            throw new WechatException(WechatException::CLIENT_ERROR, null, null, [$response['errcode'], $response['errmsg']]);
+            throw new WechatException(WechatException::CLIENT_ERROR, parans: [$response['errcode'], $response['errmsg']]);
+        }
+
+        return $response;
+    }
+
+    public function getPhone(string $code): array
+    {
+        $response = $this->getClient()->post('/wxa/business/getuserphonenumber', [
+            'query' => [
+                'access_token' => $this->getWechatService()->getAccessToken(),
+            ],
+            'json' => [
+                'code' => $code,
+            ],
+        ]);
+        $response = Json::decode($response->getBody()->__toString());
+        if (isset($response['errcode']) && $response['errcode'] !== 0) {
+            throw new WechatException(WechatException::CLIENT_ERROR, params: [$response['errcode'], $response['errmsg']]);
         }
 
         return $response;

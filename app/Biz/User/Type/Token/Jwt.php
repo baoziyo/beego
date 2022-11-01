@@ -51,9 +51,9 @@ class Jwt implements TokenStrategy
     public function refreshToken(string $refreshToken): array
     {
         $this->checkConfig();
-        $data = $this->encode($refreshToken);
+        $encode = $this->encode($refreshToken);
 
-        return $this->generateToken($data['userId']);
+        return $this->generateToken($encode->data->userId);
     }
 
     public function validate(string $token): int
@@ -65,7 +65,7 @@ class Jwt implements TokenStrategy
 
         $encode = $this->encode($token);
 
-        return $encode['data']['userId'];
+        return $encode->data->userId;
     }
 
     private function checkConfig(): void
@@ -75,13 +75,12 @@ class Jwt implements TokenStrategy
         }
     }
 
-    private function encode(string $token): array
+    private function encode(string $token): object
     {
         try {
             FirebaseJwt::$leeway = self::LEEWAY;
-            $decode = FirebaseJwt::decode($token, new FirebaseKey('JWT_KEY', self::ALG));
 
-            return (array)$decode;
+            return FirebaseJwt::decode($token, new FirebaseKey(env('JWT_KEY'), self::ALG));
         } catch (SignatureInvalidException $e) {
             // 签名不正确
             throw new TokenException(TokenException::TOKEN_ERROR);

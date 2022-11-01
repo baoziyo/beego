@@ -15,11 +15,13 @@ use Hyperf\Database\Model\Collection;
 
 interface QueueFailService extends BaseService
 {
-    public function get(mixed $id): QueueFailDaoImpl|null;
+    public function get(int $id): QueueFailDaoImpl|null;
+
+    public function getById(int $id): QueueFailDaoImpl;
 
     public function find(array $ids): Collection;
 
-    public function create(array $fields): QueueFailDaoImpl;
+    public function create(QueueFailDaoImpl $dao): QueueFailDaoImpl;
 
-    public function getByTargetId(mixed $id): QueueFailDaoImpl|null;
+    public function getByTargetId(int $id): QueueFailDaoImpl|null;
 }

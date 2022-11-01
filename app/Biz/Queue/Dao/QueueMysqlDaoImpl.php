@@ -18,6 +18,8 @@ use Hyperf\ModelCache\Cacheable;
  * @property Carbon $sendTime 发送时间
  * @property Carbon $createdTime 创建时间
  * @property Carbon $updatedTime 更新时间
+ * @method void setId(int $field)
+ * @method void setSendTime(Carbon $field)
  */
 class QueueMysqlDaoImpl extends BaseDaoImpl
 {

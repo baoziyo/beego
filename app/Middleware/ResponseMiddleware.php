@@ -94,7 +94,7 @@ class ResponseMiddleware implements MiddlewareInterface
     {
         $name = $request->getAttribute(Dispatched::class)->handler->callback;
         if (!is_string($name)) {
-            return [null, null];
+            return $name;
         }
 
         [$class, $method] = explode('@', $name);

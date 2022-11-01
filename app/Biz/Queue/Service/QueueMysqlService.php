@@ -15,13 +15,17 @@ use Hyperf\Database\Model\Collection;
 
 interface QueueMysqlService extends BaseService
 {
-    public function get(mixed $id): QueueMysqlDaoImpl|null;
+    public function get(int $id): QueueMysqlDaoImpl|null;
+
+    public function getById(int $id): QueueMysqlDaoImpl;
 
     public function find(array $ids): Collection;
 
-    public function create(array $fields): QueueMysqlDaoImpl;
+    public function create(QueueMysqlDaoImpl $dao): QueueMysqlDaoImpl;
 
-    public function producer(mixed $id, int $delay = 0): bool;
+    public function producer(int $id, int $delay = 0): bool;
 
     public function consumer(): bool;
+
+    public function delete(int $id): bool;
 }

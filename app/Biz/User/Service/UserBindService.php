@@ -23,7 +23,7 @@ interface UserBindService extends BaseService
 
     public function create(array $fields): UserBindDaoImpl;
 
-    public function createOrUpdate(string $fromId, string $type, array $fields): bool;
+    public function createOrUpdate(array $where, array $fields): bool;
 
     public function getByFromId(string $fromId): UserBindDaoImpl|null;
 

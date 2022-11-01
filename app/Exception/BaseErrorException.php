@@ -50,7 +50,7 @@ class BaseErrorException extends ServerException
         if ($result && $result !== $message) {
             return $result;
         }
-        $count = count($arguments);
+        $count = count($arguments[0]);
         if ($count > 0) {
             return sprintf($message, ...(array) $arguments[0]);
         }

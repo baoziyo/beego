@@ -12,6 +12,7 @@ namespace App\Biz\Token\Dao;
 use App\Core\Biz\Dao\Impl\BaseDaoImpl;
 use Carbon\Carbon;
 use Hyperf\ModelCache\Cacheable;
+use Hyperf\Snowflake\Concern\Snowflake;
 
 /**
  * @property int $id
@@ -20,10 +21,15 @@ use Hyperf\ModelCache\Cacheable;
  * @property int $expires 有效期(秒)
  * @property Carbon $expiresTime 过期时间
  * @property Carbon $createdTime 创建时间
+ * @method void setKey(string $field)
+ * @method void setValue(string $field)
+ * @method void setExpires(int $field)
+ * @method void setExpiresTime(Carbon $field)
  */
 class TokenDaoImpl extends BaseDaoImpl
 {
     use Cacheable;
+    use Snowflake;
 
     public const CREATED_AT = null;
 
@@ -32,7 +38,7 @@ class TokenDaoImpl extends BaseDaoImpl
     protected ?string $table = 'token';
 
     protected array $fillable = [
-        'id', 'key', 'value', 'expires', 'expiresTime',
+        'id', 'key', 'value', 'expires', 'expiresTime', 'createdTime',
     ];
 
     protected array $casts = [

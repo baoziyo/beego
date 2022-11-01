@@ -10,15 +10,18 @@ declare(strict_types=1);
 namespace App\Biz\Queue\Config;
 
 use App\Core\Biz\Container\Biz;
-use Hyperf\Di\Annotation\Inject;
 
-abstract class BaseMailTemplate
+abstract class BaseQueueHandle
 {
-    #[Inject]
     protected Biz $biz;
 
+    public function __construct(Biz $biz)
+    {
+        $this->biz = $biz;
+    }
+
     /**
-     * @return array[id,failUserIds,failDetails,...]
+     * @return array[failUserIds,failDetails,...]
      */
     abstract public function handle(array $params): array;
 }

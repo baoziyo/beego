@@ -11,6 +11,7 @@ namespace App\Biz\Wechat\Service\Impl;
 
 use App\Biz\Token\Service\TokenService;
 use App\Biz\User\Service\UserBindService;
+use App\Biz\User\Service\UserService;
 use App\Biz\Wechat\Client\WechatClient;
 use App\Biz\Wechat\Exception\WechatException;
 use App\Biz\Wechat\Service\WechatService;
@@ -22,7 +23,10 @@ class WechatServiceImpl extends BaseServiceImpl implements WechatService
     {
         $response = $this->getClient()->codeToSession($code);
 
-        $this->getUserBindService()->createOrUpdate($response['openid'], UserBindService::WECHAT_TYPE, [
+        $this->getUserBindService()->createOrUpdate([
+            'fromId' => $response['openid'],
+            'type' => UserService::USER_SOURCE_WECHAT_APP,
+        ], [
             'type' => UserBindService::WECHAT_TYPE,
             'fromId' => $response['openid'],
             'fromKey' => $response['session_key'],
@@ -49,7 +53,7 @@ class WechatServiceImpl extends BaseServiceImpl implements WechatService
         $response = $this->getClient()->getAccessToken();
         $this->getTokenService()->updateToken(TokenService::WECHAT_ACCESS_TOKEN, $response['access_token'], $response['expires_in']);
 
-        return $response['expires_in'];
+        return $response['access_token'];
     }
 
     public function getAppId(): string
@@ -68,6 +72,13 @@ class WechatServiceImpl extends BaseServiceImpl implements WechatService
         }
 
         return env('WECHAT_APP_SECRET');
+    }
+
+    public function getPhone(string $code): string
+    {
+        $response = $this->getClient()->getPhone($code);
+
+        return $response['phone_info']['phoneNumber'];
     }
 
     private function getClient(): WechatClient
