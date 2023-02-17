@@ -33,7 +33,7 @@
     "hyperf/retry": "~3.0.0",
     "hyperf/crontab": "~3.0.0",
     "hyperf/snowflake": "~3.0.0",
-    "firebase/php-jwt": "^5.5",
+    "firebase/php-jwt": "^6.0",
     "hyperf/validation": "~3.0.0",
     "hyperf/signal": "~3.0.0",
     "hyperf/tracer": "~3.0.0",
